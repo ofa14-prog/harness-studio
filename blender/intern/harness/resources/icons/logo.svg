@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Harness Studio mark: an open cube frame held by a single line (original design). -->
+  <path d="M16 3.5 27 9.75v12.5L16 28.5 5 22.25V9.75Z" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="M5 9.75 16 16l11-6.25M16 16v12.5" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="16" cy="16" r="3.2" fill="#ffffff"/>
+</svg>

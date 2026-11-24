@@ -1,0 +1,123 @@
+import QtQuick
+
+// Generation templates: camera moves, effects, image apps, product and 3D recipes. Each adds a
+// prompt fragment written in plain cinematography / art-direction language, and describes the
+// little animation its tile plays (drawn by TemplateTile, no third-party footage).
+//   anim: { dx, dy (fraction of the tile), zoom (end scale), roll (deg), orbit (0..1),
+//           shake (px), depth (bg vs subject: 1 = flat), dollyZoom, fx (effect id), ms }
+QtObject {
+    readonly property var categories: ({
+        "video": [ { k: "camera", t: qsTr("Camera") }, { k: "effects", t: qsTr("Effects") }, { k: "product", t: qsTr("Product") } ],
+        "image": [ { k: "apps", t: qsTr("Image apps") }, { k: "productimg", t: qsTr("Product") } ],
+        "3d": [ { k: "3d", t: qsTr("3D") } ]
+    })
+
+    readonly property var list: [
+        // ---- Camera moves -------------------------------------------------------------------
+        { id: "static", cat: "camera", name: "Static", prompt: "locked-off static camera, no camera movement", anim: { ms: 2400 } },
+        { id: "dolly_in", cat: "camera", name: "Dolly In", prompt: "slow smooth dolly in towards the subject", anim: { zoom: 1.45, depth: 0.6 } },
+        { id: "dolly_out", cat: "camera", name: "Dolly Out", prompt: "smooth dolly out away from the subject revealing the surroundings", anim: { zoom: 0.72, depth: 0.6 } },
+        { id: "dolly_left", cat: "camera", name: "Dolly Left", prompt: "lateral dolly move to the left, parallax between foreground and background", anim: { dx: 0.22, depth: 0.45 } },
+        { id: "dolly_right", cat: "camera", name: "Dolly Right", prompt: "lateral dolly move to the right, parallax between foreground and background", anim: { dx: -0.22, depth: 0.45 } },
+        { id: "super_dolly_in", cat: "camera", name: "Super Dolly In", prompt: "fast dramatic dolly in, accelerating towards the subject", anim: { zoom: 2.1, depth: 0.55, ms: 1500 } },
+        { id: "super_dolly_out", cat: "camera", name: "Super Dolly Out", prompt: "fast dramatic dolly out, pulling away at speed", anim: { zoom: 0.5, depth: 0.55, ms: 1500 } },
+        { id: "double_dolly", cat: "camera", name: "Double Dolly", prompt: "subject and camera move forward together, the subject stays the same size while the background slides", anim: { depth: 0.2, dollyZoom: 0.25 } },
+        { id: "dolly_zoom_in", cat: "camera", name: "Dolly Zoom In", prompt: "vertigo dolly zoom, the subject stays the same size while the background stretches away", anim: { dollyZoom: 0.55 } },
+        { id: "dolly_zoom_out", cat: "camera", name: "Dolly Zoom Out", prompt: "reverse vertigo dolly zoom, the background compresses towards the subject", anim: { dollyZoom: -0.45 } },
+        { id: "crash_zoom_in", cat: "camera", name: "Crash Zoom In", prompt: "sudden crash zoom in onto the subject's face", anim: { zoom: 2.4, ms: 900 } },
+        { id: "crash_zoom_out", cat: "camera", name: "Crash Zoom Out", prompt: "sudden crash zoom out from the subject", anim: { zoom: 0.45, ms: 900 } },
+        { id: "rapid_zoom_in", cat: "camera", name: "Rapid Zoom In", prompt: "rapid snap zoom in", anim: { zoom: 1.9, ms: 700 } },
+        { id: "rapid_zoom_out", cat: "camera", name: "Rapid Zoom Out", prompt: "rapid snap zoom out", anim: { zoom: 0.55, ms: 700 } },
+        { id: "yoyo_zoom", cat: "camera", name: "YoYo Zoom", prompt: "zoom in then back out in one fluid motion", anim: { zoom: 1.6, yoyo: true } },
+        { id: "zoom_in", cat: "camera", name: "Zoom In", prompt: "optical zoom in, no change of perspective", anim: { zoom: 1.5, depth: 1 } },
+        { id: "zoom_out", cat: "camera", name: "Zoom Out", prompt: "optical zoom out, no change of perspective", anim: { zoom: 0.68, depth: 1 } },
+        { id: "orbit_360", cat: "camera", name: "360 Orbit", prompt: "camera orbits 360 degrees around the subject at eye level", anim: { orbit: 1, ms: 3600 } },
+        { id: "arc_left", cat: "camera", name: "Arc Left", prompt: "camera arcs to the left around the subject", anim: { orbit: 0.35 } },
+        { id: "arc_right", cat: "camera", name: "Arc Right", prompt: "camera arcs to the right around the subject", anim: { orbit: -0.35 } },
+        { id: "lazy_susan", cat: "camera", name: "Lazy Susan", prompt: "the subject turns on a turntable while the camera stays still", anim: { spin: 1, ms: 3200 } },
+        { id: "bullet_time", cat: "camera", name: "Bullet Time", prompt: "frozen moment, the camera sweeps around the subject in slow motion while time stands still", anim: { orbit: 0.6, freeze: true, ms: 3000 } },
+        { id: "crane_up", cat: "camera", name: "Crane Up", prompt: "crane shot rising up and tilting down to keep the subject framed", anim: { dy: 0.22, depth: 0.5 } },
+        { id: "crane_down", cat: "camera", name: "Crane Down", prompt: "crane shot descending towards the subject", anim: { dy: -0.22, depth: 0.5 } },
+        { id: "crane_over", cat: "camera", name: "Crane Over The Head", prompt: "camera cranes up and over the subject's head into a top-down view", anim: { dy: 0.3, zoom: 0.8, roll: 0, depth: 0.4, overhead: true } },
+        { id: "jib_up", cat: "camera", name: "Jib Up", prompt: "jib arm moves up smoothly", anim: { dy: 0.16, depth: 0.6 } },
+        { id: "jib_down", cat: "camera", name: "Jib Down", prompt: "jib arm moves down smoothly", anim: { dy: -0.16, depth: 0.6 } },
+        { id: "tilt_up", cat: "camera", name: "Tilt Up", prompt: "camera tilts up from the ground to the subject", anim: { dy: 0.28, depth: 1 } },
+        { id: "tilt_down", cat: "camera", name: "Tilt Down", prompt: "camera tilts down onto the subject", anim: { dy: -0.28, depth: 1 } },
+        { id: "pan_left", cat: "camera", name: "Pan Left", prompt: "camera pans to the left", anim: { dx: 0.3, depth: 1 } },
+        { id: "pan_right", cat: "camera", name: "Pan Right", prompt: "camera pans to the right", anim: { dx: -0.3, depth: 1 } },
+        { id: "whip_pan", cat: "camera", name: "Whip Pan", prompt: "fast whip pan with motion blur", anim: { dx: -0.9, depth: 1, ms: 650, blur: true } },
+        { id: "dutch_angle", cat: "camera", name: "Dutch Angle", prompt: "tilted dutch angle framing that rolls into place", anim: { roll: 14 } },
+        { id: "handheld", cat: "camera", name: "Handheld", prompt: "handheld camera with natural shake and breathing", anim: { shake: 3, ms: 2600 } },
+        { id: "wiggle", cat: "camera", name: "Wiggle", prompt: "playful rhythmic camera wiggle", anim: { shake: 6, ms: 1400 } },
+        { id: "snorricam", cat: "camera", name: "Snorricam", prompt: "body-mounted snorricam, the subject stays centred while the world moves around them", anim: { shake: 2, roll: 5, depth: 0.1, ms: 2200 } },
+        { id: "head_tracking", cat: "camera", name: "Head Tracking", prompt: "camera tracks the subject's head as they move", anim: { dx: 0.15, depth: 0.15 } },
+        { id: "hero_cam", cat: "camera", name: "Hero Cam", prompt: "low-angle hero shot rising slowly, the subject looks powerful", anim: { dy: 0.12, zoom: 1.2, depth: 0.5 } },
+        { id: "robo_arm", cat: "camera", name: "Robo Arm", prompt: "precise robotic arm move: fast push in, arc and stop", anim: { zoom: 1.5, orbit: 0.25, ms: 1300 } },
+        { id: "fpv_drone", cat: "camera", name: "FPV Drone", prompt: "FPV drone flight swooping forward and banking", anim: { zoom: 1.8, roll: -12, dy: -0.08, depth: 0.4, ms: 1800 } },
+        { id: "aerial_pullback", cat: "camera", name: "Aerial Pullback", prompt: "aerial drone pullback rising away from the subject", anim: { zoom: 0.55, dy: 0.12, depth: 0.5, ms: 2800 } },
+        { id: "overhead", cat: "camera", name: "Overhead", prompt: "top-down overhead shot", anim: { overhead: true, ms: 2400 } },
+        { id: "through_in", cat: "camera", name: "Through Object In", prompt: "camera passes through a foreground object into the scene", anim: { zoom: 2.0, through: true, ms: 1700 } },
+        { id: "through_out", cat: "camera", name: "Through Object Out", prompt: "camera pulls back through a foreground object", anim: { zoom: 0.5, through: true, ms: 1700 } },
+        { id: "focus_change", cat: "camera", name: "Focus Change", prompt: "rack focus from the foreground to the subject", anim: { focus: true, ms: 2200 } },
+        { id: "low_shutter", cat: "camera", name: "Low Shutter", prompt: "low shutter speed, streaking motion blur", anim: { dx: -0.12, blur: true, ms: 1800 } },
+        { id: "fisheye", cat: "camera", name: "Fisheye", prompt: "ultra-wide fisheye lens, curved edges", anim: { zoom: 1.2, fisheye: true } },
+        { id: "hyperlapse", cat: "camera", name: "Hyperlapse", prompt: "hyperlapse moving forward through the scene, time sped up", anim: { zoom: 1.7, ms: 1100 } },
+        { id: "timelapse_landscape", cat: "camera", name: "Timelapse Landscape", prompt: "timelapse of the landscape, clouds and light moving fast", anim: { sky: true, ms: 2600 } },
+        { id: "car_chase", cat: "camera", name: "Car Chasing", prompt: "camera chases a fast car from behind, low and close to the road", anim: { shake: 2, zoom: 1.15, road: true, ms: 1200 } },
+        { id: "eyes_in", cat: "camera", name: "Eyes In", prompt: "extreme push in onto the subject's eyes", anim: { zoom: 3.0, dy: 0.18, ms: 1600 } },
+        { id: "object_pov", cat: "camera", name: "Object POV", prompt: "point of view of an object looking at the subject", anim: { roll: -8, zoom: 1.3, depth: 0.5 } },
+        { id: "flying_transition", cat: "camera", name: "Flying Cam Transition", prompt: "the camera flies from one place to another in one continuous move", anim: { dx: -0.6, zoom: 1.3, depth: 0.4, ms: 1900 } },
+
+        // ---- Effects -----------------------------------------------------------------------
+        { id: "explosion", cat: "effects", name: "Explosion", prompt: "a cinematic explosion bursts behind the subject, debris and shockwave", anim: { fx: "burst" } },
+        { id: "disintegration", cat: "effects", name: "Disintegration", prompt: "the subject disintegrates into drifting particles", anim: { fx: "dust" } },
+        { id: "set_on_fire", cat: "effects", name: "Set on Fire", prompt: "the subject is engulfed in realistic flames", anim: { fx: "fire" } },
+        { id: "levitation", cat: "effects", name: "Levitation", prompt: "the subject slowly levitates off the ground", anim: { fx: "float" } },
+        { id: "melting", cat: "effects", name: "Melting", prompt: "the subject melts down like hot wax", anim: { fx: "melt" } },
+        { id: "turning_metal", cat: "effects", name: "Turning Metal", prompt: "the subject's surface turns into polished chrome", anim: { fx: "metal" } },
+        { id: "freeze", cat: "effects", name: "Freeze", prompt: "frost spreads and the subject freezes into ice", anim: { fx: "frost" } },
+        { id: "glitch", cat: "effects", name: "Glitch", prompt: "digital glitch, RGB split and datamosh transitions", anim: { fx: "glitch" } },
+        { id: "thunder", cat: "effects", name: "Thunder", prompt: "lightning strikes around the subject, electric arcs", anim: { fx: "bolt" } },
+        { id: "shatter", cat: "effects", name: "Shatter", prompt: "the subject shatters like glass in slow motion", anim: { fx: "shatter" } },
+
+        // ---- Product (video) -----------------------------------------------------------------
+        { id: "product_spin", cat: "product", name: "Product Spin", prompt: "premium product turntable on a seamless backdrop, soft studio light", anim: { spin: 1, ms: 3000 } },
+        { id: "product_commercial", cat: "product", name: "Product Commercial", prompt: "high-end product commercial: hero reveal, light sweep across the product, macro details", anim: { fx: "sweep" } },
+        { id: "ugc_review", cat: "product", name: "UGC Review", prompt: "a person holds the product to a phone camera and talks about it, natural selfie video", anim: { shake: 2, ms: 2400 } },
+        { id: "unboxing", cat: "product", name: "Unboxing", prompt: "top-down unboxing, hands open the package and reveal the product", anim: { overhead: true, fx: "reveal" } },
+
+        // ---- Image apps ----------------------------------------------------------------------
+        { id: "relight", cat: "apps", name: "Relight", prompt: "relight the scene with dramatic cinematic key light and soft fill", anim: { fx: "sweep" } },
+        { id: "expand", cat: "apps", name: "Expand Image", prompt: "extend the image beyond its borders, continue the scene naturally", anim: { fx: "expand" } },
+        { id: "angles", cat: "apps", name: "New Angle", prompt: "the same subject seen from a new camera angle", anim: { orbit: 0.4 } },
+        { id: "figure_3d", cat: "apps", name: "3D Figure", prompt: "turn the subject into a collectible 3D figure on a display base", anim: { spin: 0.5, fx: "plinth" } },
+        { id: "render_3d", cat: "apps", name: "3D Render", prompt: "stylised clean 3D render, soft global illumination", anim: { spin: 0.3 } },
+        { id: "plushie", cat: "apps", name: "Plushie", prompt: "turn the subject into a soft plush toy", anim: { fx: "squash" } },
+        { id: "sticker", cat: "apps", name: "Sticker", prompt: "die-cut sticker of the subject with a white border", anim: { fx: "peel" } },
+        { id: "outfit_swap", cat: "apps", name: "Outfit Swap", prompt: "same person, new outfit: tailored modern streetwear", anim: { fx: "swap" } },
+        { id: "character_swap", cat: "apps", name: "Character Swap", prompt: "replace the character while keeping pose, light and framing", anim: { fx: "swap" } },
+        { id: "glam", cat: "apps", name: "Glam", prompt: "glamorous beauty portrait, flawless lighting, editorial retouch", anim: { fx: "sparkle" } },
+        { id: "bts", cat: "apps", name: "Behind the Scenes", prompt: "behind-the-scenes photo of this shot on set, crew and lights visible", anim: { zoom: 0.7 } },
+        { id: "detail", cat: "apps", name: "Detail Boost", prompt: "ultra-detailed, sharp textures, upscaled", anim: { fx: "pixels" } },
+
+        // ---- Product (image) -----------------------------------------------------------------
+        { id: "packshot", cat: "productimg", name: "Studio Packshot", prompt: "clean studio packshot on a seamless backdrop, soft shadows", anim: { fx: "plinth" } },
+        { id: "lifestyle", cat: "productimg", name: "Lifestyle", prompt: "the product in a real lifestyle setting, natural light", anim: { zoom: 0.85 } },
+        { id: "ad_poster", cat: "productimg", name: "Ad Poster", prompt: "bold advertising poster layout around the product, room for a headline", anim: { fx: "reveal" } },
+        { id: "flat_lay", cat: "productimg", name: "Flat Lay", prompt: "top-down flat lay arrangement with props", anim: { overhead: true } },
+
+        // ---- 3D -------------------------------------------------------------------------------
+        { id: "game_prop", cat: "3d", name: "Game Prop", prompt: "game-ready prop, clean topology, PBR textures", anim: { spin: 1, ms: 3200 } },
+        { id: "character", cat: "3d", name: "Character", prompt: "full-body character in A-pose, clean silhouette", anim: { spin: 1, ms: 3600 } },
+        { id: "product_model", cat: "3d", name: "Product Model", prompt: "accurate product model with crisp edges and real materials", anim: { spin: 1, fx: "plinth", ms: 3200 } },
+        { id: "low_poly", cat: "3d", name: "Low Poly", prompt: "stylised low-poly model with flat shading", anim: { spin: 1, fx: "pixels", ms: 3000 } },
+        { id: "environment", cat: "3d", name: "Environment Piece", prompt: "modular environment piece, tileable details", anim: { orbit: 0.5, ms: 3200 } },
+        { id: "figurine", cat: "3d", name: "Figurine", prompt: "collectible figurine on a round base", anim: { spin: 1, fx: "plinth", ms: 3400 } }
+    ]
+
+    function forCategory(cat) {
+        var out = []
+        for (var i = 0; i < list.length; i++) if (list[i].cat === cat) out.push(list[i])
+        return out
+    }
+}

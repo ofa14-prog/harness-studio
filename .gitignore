@@ -1,0 +1,63 @@
+# Build outputs and artifacts
+build/
+build-*/
+build-blender/
+bin/
+obj/
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Compiled binaries and application packages
+craftblender
+harnessstudio
+app/app
+app/harnessstudio
+packages/
+app/packages/
+*.tar.gz
+*.zip
+*.7z
+
+# Logs and activity records
+*.log
+inbox/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment and secrets
+.env
+.env.*
+*.key
+*.pem
+
+# Dependencies build artifacts
+deps/eigen-build/
+deps/eigen.tar.gz
+
+# Upstream metadata and backup
+blender_upstream.git.bak/
+
+# Reverse engineering and workspace records
+agent-session.jsonl
+craft.json
+usage.json
+feed.json
+questions.json
+mechanics.json
+investigation.cany/
+checks/
+legacy/
+pinned/
+reference/
+.agents/
+.aws/
+.codex/
+.directory
